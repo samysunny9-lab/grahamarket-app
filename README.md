@@ -15,13 +15,25 @@ stocks, shown next to the stock's live price.
 
 - **Outlook tab** — type an NSE symbol (e.g. `RELIANCE`, `TCS`, `INFY`), see:
   - the **live price** (fetched from a configurable provider),
-  - a **30-day direction + percentage** derived from the current sky,
-  - an **honest "Low confidence" label**, and
-  - the **contributing graha factors** so the reasoning is fully visible.
+  - **7-day and 30-day** direction + percentage headlines,
+  - a **day-by-day prediction** for each day of the horizon (toggle 7/30), where
+    every day is scored from *that day's* real sidereal positions (the day's Moon
+    sign/nakshatra is shown as the fastest-moving driver),
+  - the **contributing graha factors**, and
+  - an **"Add to Watchlist"** button.
+- **Numerology tab** — the *same* 7 & 30-day prediction computed via **Chaldean
+  numerology** instead of grahas: the symbol's name number, the date number, their
+  compound, planetary rulerships, and a day-by-day series.
+- **Watchlist tab** — stocks you saved, **persisted on-device** (survives app
+  restarts). Each row shows the **date added**, **price when added**, and the
+  **current live price** (refreshed on open / via Refresh), with a **Remove** button.
 - **Sky tab** — the live sidereal positions of all nine grahas: rashi, nakshatra,
   retrograde, dignity (exaltation/debilitation/own-sign) and combustion.
 - **Settings tab** — switch the **price data provider** at runtime and store an
   API key if the chosen provider needs one.
+
+Everything carries the **Low confidence / educational** label. Day-by-day figures
+are a genuine computation from each day's real positions — not a fabricated forecast.
 
 ## The astronomy (the serious part)
 
