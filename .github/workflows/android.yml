@@ -1,4 +1,4 @@
-name: Build APK
+name: Build & Release APK
 
 on:
   push:
@@ -7,8 +7,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# Needed so the workflow can create GitHub Releases and upload the APK to them.
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -33,6 +34,14 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+      # A unique, increasing version for every run (so each push = a new release).
+      - name: Compute version
+        id: version
+        run: |
+          VERSION="v1.0.${{ github.run_number }}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Release version: $VERSION"
+
       - name: Build debug APK
         run: ./gradlew :app:assembleDebug --stacktrace
 
@@ -44,10 +53,38 @@ jobs:
             && echo "APK built successfully: app-debug.apk" \
             || (echo "ERROR: expected app-debug.apk was not found" && exit 1)
 
+      # Give the APK a versioned name so each release's asset is distinct.
+      - name: Rename APK with version
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk \
+             "grahamarket-${{ steps.version.outputs.version }}.apk"
+          ls -la grahamarket-*.apk
+
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: grahamarket-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: grahamarket-${{ steps.version.outputs.version }}-apk
+          path: grahamarket-${{ steps.version.outputs.version }}.apk
           if-no-files-found: error
           retention-days: 90
+
+      # Create a permanent GitHub Release (only on pushes to main / manual runs,
+      # not on pull requests) with the APK attached as a non-expiring download.
+      - name: Create GitHub Release
+        if: github.event_name != 'pull_request'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: GrahaMarket ${{ steps.version.outputs.version }}
+          body: |
+            Automated build of GrahaMarket (educational — not investment advice).
+
+            - Version: ${{ steps.version.outputs.version }}
+            - Commit: ${{ github.sha }}
+            - Built from branch: ${{ github.ref_name }}
+
+            Download `grahamarket-${{ steps.version.outputs.version }}.apk` below and
+            install it on an Android device (enable "install from unknown sources"
+            for this debug build).
+          files: grahamarket-${{ steps.version.outputs.version }}.apk
+          fail_on_unmatched_files: true
