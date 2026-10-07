@@ -72,4 +72,43 @@ class MarketRepository(private val settings: SettingsStore) {
 
     /** Just the live price (used to refresh watchlist rows). */
     suspend fun currentQuote(symbol: String): QuoteResult = quote(symbol)
+
+    /** Deeper-jyotish report (dasha + transit-to-natal + bhava) with horizons. */
+    suspend fun lookupDeeper(symbol: String): DeeperReport {
+        val now = Date()
+        val result = quote(symbol)
+        val reading = com.grahamarket.astro.DeeperJyotishEngine.reading(symbol, now)
+        val h7 = com.grahamarket.astro.DeeperJyotishEngine.horizon(symbol, 7, now)
+        val h30 = com.grahamarket.astro.DeeperJyotishEngine.horizon(symbol, 30, now)
+        return when (result) {
+            is QuoteResult.Success -> DeeperReport(result.quote, null, reading, h7, h30)
+            is QuoteResult.Error -> DeeperReport(null, result.message, reading, h7, h30)
+        }
+    }
+
+    /** Backtest / Reality-Check across all three engines for a symbol. */
+    fun backtest(symbol: String, days: Int = 90): BacktestBundle {
+        val now = Date()
+        return BacktestBundle(
+            graha = com.grahamarket.astro.BacktestEngine.run(symbol, com.grahamarket.astro.BacktestEngine.Source.GRAHA, days, now),
+            numerology = com.grahamarket.astro.BacktestEngine.run(symbol, com.grahamarket.astro.BacktestEngine.Source.NUMEROLOGY, days, now),
+            deeper = com.grahamarket.astro.BacktestEngine.run(symbol, com.grahamarket.astro.BacktestEngine.Source.DEEPER, days, now)
+        )
+    }
 }
+
+/** Deeper-jyotish report. */
+data class DeeperReport(
+    val quote: Quote?,
+    val quoteError: String?,
+    val reading: com.grahamarket.astro.DeeperJyotishEngine.Reading,
+    val horizon7: com.grahamarket.astro.DeeperJyotishEngine.DeeperHorizon,
+    val horizon30: com.grahamarket.astro.DeeperJyotishEngine.DeeperHorizon
+)
+
+/** Backtest results for all engines, shown together on the Reality-Check screen. */
+data class BacktestBundle(
+    val graha: com.grahamarket.astro.BacktestEngine.Result,
+    val numerology: com.grahamarket.astro.BacktestEngine.Result,
+    val deeper: com.grahamarket.astro.BacktestEngine.Result
+)

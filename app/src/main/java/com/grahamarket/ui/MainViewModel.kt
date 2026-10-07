@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.grahamarket.astro.GrahaEngine
 import com.grahamarket.astro.GrahaPosition
+import com.grahamarket.data.BacktestBundle
+import com.grahamarket.data.DeeperReport
 import com.grahamarket.data.MarketRepository
 import com.grahamarket.data.NumerologyReport
 import com.grahamarket.data.ProviderType
@@ -43,6 +45,11 @@ data class UiState(
     val numQuery: String = "",
     val numLoading: Boolean = false,
     val numReport: NumerologyReport? = null,
+    // Combined "Deeper + Reality Check" tab
+    val deepQuery: String = "",
+    val deepLoading: Boolean = false,
+    val deeperReport: DeeperReport? = null,
+    val backtest: BacktestBundle? = null,
     // Watchlist tab
     val watchItems: List<WatchItem> = emptyList(),
     val watchRows: List<WatchRow> = emptyList(),
@@ -106,6 +113,21 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             _state.value = _state.value.copy(numLoading = true)
             val report = repo.lookupNumerology(symbol)
             _state.value = _state.value.copy(numLoading = false, numReport = report)
+        }
+    }
+
+    // ---- Combined "Deeper + Reality Check" tab ----
+
+    fun onDeepQueryChange(q: String) { _state.value = _state.value.copy(deepQuery = q) }
+
+    fun analyzeDeeper() {
+        val symbol = _state.value.deepQuery.trim()
+        if (symbol.isEmpty()) return
+        viewModelScope.launch {
+            _state.value = _state.value.copy(deepLoading = true)
+            val report = repo.lookupDeeper(symbol)
+            val bt = repo.backtest(symbol, 90)
+            _state.value = _state.value.copy(deepLoading = false, deeperReport = report, backtest = bt)
         }
     }
 

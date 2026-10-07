@@ -27,6 +27,14 @@ stocks, shown next to the stock's live price.
 - **Watchlist tab** — stocks you saved, **persisted on-device** (survives app
   restarts). Each row shows the **date added**, **price when added**, and the
   **current live price** (refreshed on open / via Refresh), with a **Remove** button.
+- **Deeper + Check tab** — two things on one screen:
+  - **Deeper Jyotish (B):** a more authentic Vedic forecast using **Vimshottari
+    Dasha** (running Mahadasha/Antardasha), **transit-to-natal** analysis and
+    **bhava (house)** weighting from the stock's inferred natal Moon.
+  - **Reality Check (A):** an honest **backtest** of all three engines (graha,
+    numerology, deeper) showing their real **directional hit-rate** and
+    **correlation** with market moves. Spoiler: hit-rate ≈ 50% and correlation ≈ 0,
+    because astrology has no causal link to prices. This is the educational payoff.
 - **Sky tab** — the live sidereal positions of all nine grahas: rashi, nakshatra,
   retrograde, dignity (exaltation/debilitation/own-sign) and combustion.
 - **Settings tab** — switch the **price data provider** at runtime and store an
@@ -34,6 +42,24 @@ stocks, shown next to the stock's live price.
 
 Everything carries the **Low confidence / educational** label. Day-by-day figures
 are a genuine computation from each day's real positions — not a fabricated forecast.
+
+### Why the predictions "fail" — and why that's the point
+
+The forecasts do not reliably predict the market, and no tuning can make them.
+Planetary positions and numerology have **no proven causal relationship** with
+stock prices. Rather than hide this, the **Reality Check** tab measures it
+directly: it backtests each engine and shows the hit-rate landing near a coin-flip
+(~50%) and correlation near zero. The app's value is teaching *why* such
+predictors can't work — demonstrated with real statistics — not pretending they do.
+
+### Vimshottari Dasha (authentic)
+
+The dasha engine follows Brihat Parashara Hora Shastra: a 120-year cycle with
+fixed lord periods (Ketu 7, Venus 20, Sun 6, Moon 10, Mars 7, Rahu 18, Jupiter 16,
+Saturn 19, Mercury 17), started from the Moon's birth nakshatra, with the 27
+nakshatras cycling the 9 lords three times. The balance of the opening dasha is
+derived from the Moon's progress through its nakshatra. (Verified: periods sum to
+120, nakshatra→lord mapping matches BPHS.)
 
 ## The astronomy (the serious part)
 
